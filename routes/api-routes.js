@@ -90,32 +90,32 @@ router
 
 // This route should create a new User
 router.post('/user', async (req, res) => {
-  try {
+ try {
   const {username, password} = req.body
 
   // if the username or password is not provided, return a 400 status
   if (!(username && password))
-    return res.status(400).send('Please provide password')
+  return res.status(400).send('Please provide password')
 
   // hash the password using bcrypt.hash and use 10 salt rounds
   // then insert the username and hashed password into the users table
   const hash = await bcrypt.hash(password, 10)
   await db.query(
-    `INSERT INTO users (username, password) VALUES (?, ?)`,
+    `INSERT INTO users (username, password) VALUES (?,?)`,
     [username, hash]
   )
-
   // and redirect the user to the /login page
     res.redirect('/login')
 
   // if an error occurs with a code property equal to 'ER_DUP_ENTRY'
   // return a 409 status code (the user exists already)
   // for any other error, return a 500 status
-}catch(err){
+} catch(err){
   if (err.code === 'ER_DUP_ENTRY'){
       return res.status(409).send('This username already exists');
+    } else {
+      return res.status(500).send('Error creating user: ' + err.message || err.sqlMessage)
     }
-      res.status(500).send('Error creating user: ' + err.message || err.sqlMessage)
   }
 })
 
@@ -130,7 +130,8 @@ router.post('/login', async (req, res) => {
     if (!(username && password))
       return res.status(400).send('Must include username and password')
       const [[user]] = await db.query (
-        `SELECT * FROM users WHERE username=?`, username
+        `SELECT * FROM users WHERE username=?`, 
+        [username]
       )
       if (!user) 
         return res.status(400).send('User was not found')
@@ -144,17 +145,18 @@ router.post('/login', async (req, res) => {
   // call req.session.save and in the callback redirect to /   
       if (!CorrectPassword) 
         return res.status(400).send('Incorrect password') 
-        req.session.loggedIn = true
+      else req.session.loggedIn = true
         req.session.userId = user.id
         req.session.save(() => res.redirect('/'))
     }catch (err){
-  }
-    res.status(500).send('Error Creating User: ' + err.message || err.sqlMessage)
+ 
+    return res.status(500).send('Error Creating User: ' + err.message || err.sqlMessage)
+    }
 })
 
 router.get('/logout', async (req, res) => {
   // call req.session.destroy and in the callback redirect to /
-  req.session.destory(() => res.redirect('/'))
+  req.session.destroy(() => res.redirect('/'))
 })
 
 module.exports = router

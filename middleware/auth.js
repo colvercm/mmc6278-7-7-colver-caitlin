@@ -6,7 +6,8 @@ function checkAuth(req, res, next) {
 	} else {
 
 	// If the user is not logged in, redirect to /login
-		res.redirect('/login').send('User not logged in')
+		res.redirect('/login')
 	}
 }
+
 module.exports = checkAuth

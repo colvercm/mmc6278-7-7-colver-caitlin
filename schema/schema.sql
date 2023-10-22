@@ -30,5 +30,5 @@ CREATE TABLE cart (
   
   FOREIGN KEY (user_id) 
     REFERENCES users (id) 
-    ON DELETE CASCADE ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
