@@ -111,12 +111,13 @@ router.post('/user', async (req, res) => {
   // if an error occurs with a code property equal to 'ER_DUP_ENTRY'
   // return a 409 status code (the user exists already)
   // for any other error, return a 500 status
-  } catch(err) {
-    if (err.code === 'ER_DUP_ENTRY')
-      return res.status(409).send('This username already exists')
+}catch(err){
+  if (err.code === 'ER_DUP_ENTRY'){
+      return res.status(409).send('This username already exists');
+    }
       res.status(500).send('Error creating user: ' + err.message || err.sqlMessage)
   }
-});
+})
 
 // This route will log the user in and create the session
 router.post('/login', async (req, res) => {
@@ -129,13 +130,13 @@ router.post('/login', async (req, res) => {
     if (!(username && password))
       return res.status(400).send('Must include username and password')
       const [[user]] = await db.query (
-        `SELECT * FROM users WHERE username=?`,
+        `SELECT * FROM users WHERE username=?`, username
       )
       if (!user) 
         return res.status(400).send('User was not found')
   
   // If the user is found, use bcrypt.compare to compare the password to the hash
-    const CorrectPassword = await bcrypt.compare(password, user.password)
+      const CorrectPassword = await bcrypt.compare(password, user.password)
  
   // If the password is wrong, return a 400 status code
   // If the password matches, set req.session.loggedIn to true
@@ -146,11 +147,10 @@ router.post('/login', async (req, res) => {
         req.session.loggedIn = true
         req.session.userId = user.id
         req.session.save(() => res.redirect('/'))
-      
-      } catch(err) {
-        res.status(500).send('Error Creating User: ' + err.message || err.sqlMessage)
+    }catch (err){
   }
-});
+    res.status(500).send('Error Creating User: ' + err.message || err.sqlMessage)
+})
 
 router.get('/logout', async (req, res) => {
   // call req.session.destroy and in the callback redirect to /
