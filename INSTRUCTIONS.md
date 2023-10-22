@@ -64,7 +64,7 @@ Next, open `routes/api-routes.js` and follow the instructions within to implemen
 
 The login page routes are already created for you in `routes/html-routes.js` along with handlebars templates for the create account and login pages. Do note how the HTML and API routes employ `req.session.loggedIn`, as well as how the handlebars templates respond to authenticated vs unauthenticated users.
 
-Also note that a number of routes are using the `checkAuth` middleware function to prevent unauthenticated users from accessing them. Navigate to `/middleware/auth.js` and follow the instructions to implement the `checkAuth` middleware.
+Also note that a number of routes are using the `checkAuth` middleware function to prevent unauthenticated users from accessing them. Navigate to `/middleware/auth.js` andawsl --update follow the instructions to implement the `checkAuth` middleware.
 
 Finally, deploy your application to [Heroku](https://www.heroku.com/) and use JawsDB for the production database.
 

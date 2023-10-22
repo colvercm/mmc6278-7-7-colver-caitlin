@@ -94,6 +94,9 @@ router.post('/user', async (req, res) => {
   const {username, password} = req.body
 
   // if the username or password is not provided, return a 400 status
+  if (!(username && password))
+    return res.status(400).send('Please provide password')
+
   // hash the password using bcrypt.hash and use 10 salt rounds
   // then insert the username and hashed password into the users table
   const hash = await bcrypt.hash(password, 10)
@@ -110,8 +113,8 @@ router.post('/user', async (req, res) => {
   // for any other error, return a 500 status
   } catch(err) {
     if (err.code === 'ER_DUP_ENTRY')
-    return res.status(409).send('This username already exists')
-    res.status(500).send('Error creating user: ' + err.message || err.sqlMessage)
+      return res.status(409).send('This username already exists')
+      res.status(500).send('Error creating user: ' + err.message || err.sqlMessage)
   }
 });
 
@@ -128,7 +131,8 @@ router.post('/login', async (req, res) => {
       const [[user]] = await db.query (
         `SELECT * FROM users WHERE username=?`,
       )
-      if (!user) return res.status(400).send('User was not found')
+      if (!user) 
+        return res.status(400).send('User was not found')
   
   // If the user is found, use bcrypt.compare to compare the password to the hash
     const CorrectPassword = await bcrypt.compare(password, user.password)
@@ -137,7 +141,8 @@ router.post('/login', async (req, res) => {
   // If the password matches, set req.session.loggedIn to true
   // set req.session.userId to the user's id
   // call req.session.save and in the callback redirect to /   
-      if (!CorrectPassword) return res.status(400).send('Incorrect password') 
+      if (!CorrectPassword) 
+        return res.status(400).send('Incorrect password') 
         req.session.loggedIn = true
         req.session.userId = user.id
         req.session.save(() => res.redirect('/'))

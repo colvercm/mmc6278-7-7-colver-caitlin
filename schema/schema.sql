@@ -14,7 +14,7 @@ CREATE TABLE inventory (
 -- username that's a 100 char varchar and unique
 -- password that's a 200 char varchar
 CREATE TABLE users (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
   username VARCHAR(100) NOT NULL unique,
   password VARCHAR(200) NOT NULL
 );
@@ -24,6 +24,11 @@ CREATE TABLE cart (
   inventory_id INT NOT NULL,
   user_id INT NOT NULL,
   quantity INT NOT NULL DEFAULT 1,
-  FOREIGN KEY (inventory_id) REFERENCES inventory (id) ON DELETE CASCADE ON UPDATE CASCADE
-  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (inventory_id) 
+    REFERENCES inventory (id) 
+    ON DELETE CASCADE, 
+  
+  FOREIGN KEY (user_id) 
+    REFERENCES users (id) 
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
